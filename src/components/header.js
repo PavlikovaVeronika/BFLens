@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useFile } from "../app/context/filecontext";
 
 export default function Header() {
     const pathname = usePathname();
+    const { selectedFile, setSelectedFile } = useFile();
 
     const links = [
         { name: "factors", href: "/factors" },
@@ -14,7 +16,15 @@ export default function Header() {
 
     return (
         <header className="flex w-full items-center justify-between bg-[#016bab] px-10 py-4 shadow-md">
-            <h1 className="font-semibold text-zinc-50 text-3xl">LOGO</h1>
+            <div className="flex items-center gap-3">
+                <Link href="/">
+                    <h1 className="font-bold text-zinc-50 text-3xl cursor-pointer hover:text-zinc-200 transition-colors">
+                        BMFLy
+                    </h1>
+                </Link>
+                <span className="text-3xl text-zinc-50">|</span>
+                <span className="text-zinc-50">{selectedFile}</span>
+            </div>
 
             <nav>
                 <ul className="flex flex-row space-x-8 text-zinc-50 font-medium">

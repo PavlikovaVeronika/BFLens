@@ -1,5 +1,5 @@
-import Header from "@/components/header";
-import Tabs from "@/components/tabs";
+import Header from "@/components/Header";
+import Tabs from "@/components/Tabs";
 
 
 export default function FactorsLayout({ children }) {
@@ -7,7 +7,7 @@ export default function FactorsLayout({ children }) {
     <>
         <Header/>
         <Tabs/>
-        <main className="flex w-full min-h-screen font-sans bg-zinc-50 px-10">{children}</main>
+        <main className="w-full font-sans px-10">{children}</main>
     </>
   );
 }

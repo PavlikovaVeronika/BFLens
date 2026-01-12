@@ -3,21 +3,13 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-export default function Row({ title, children, defaultOpen = false, className }) {
+export default function Row({ title, children, defaultOpen = false, height = null }) {
   const [open, setOpen] = useState(defaultOpen);
-  const [height, setHeight] = useState(0);
-  const innerRef = useRef(null);
-
-  useEffect(() => {
-    if (innerRef.current) {
-      setHeight(innerRef.current.scrollHeight);
-    }
-  }, [children]);
 
   return (
-    <div className={(className ? className : "")}>
+    <div>
       <div
-        className="flex items-center justify-between cursor-pointer select-none"
+        className="py-5 flex items-center cursor-pointer select-none"
         onClick={() => setOpen(!open)}
       >
         <h3 className="text-3xl font-semibold text-gray-800">{title}</h3>
@@ -28,15 +20,16 @@ export default function Row({ title, children, defaultOpen = false, className })
         )}
       </div>
 
+      {/* TODO - pobavit se o výšce*/}
       <div
+        className={`duration-300 ease-in-out transition-[opacity,height]`}
         style={{
           height: open ? `${height}px` : "0px",
+          opacity: open ? 1 : 0,
+          overflow: "hidden",
         }}
-        className={`overflow-hidden transition-[height,opacity] duration-300 ease-in-out ${
-          open ? "opacity-100 mt-2" : "opacity-0"
-        }`}
       >
-        <div ref={innerRef} className="text-gray-700">
+        <div className="w-full">
           {children}
         </div>
       </div>
