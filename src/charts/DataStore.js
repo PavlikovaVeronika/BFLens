@@ -21,11 +21,16 @@ export class DataStore {
     const numAttributes = this.attributes.length;
 
     const binaryMatrix = this.data.map(row => {
-      const rowSet = new Set(row);
+      const indices = Array.isArray(row) ? row : [row];
+
       const binaryRow = Array(numAttributes).fill(0);
 
-      rowSet.forEach(attrIndex => {
-        if (attrIndex < numAttributes) {
+      indices.forEach(attrIndex => {
+        if (
+          Number.isInteger(attrIndex) &&
+          attrIndex >= 0 &&
+          attrIndex < numAttributes
+        ) {
           binaryRow[attrIndex] = 1;
         }
       });
@@ -35,6 +40,7 @@ export class DataStore {
 
     return binaryMatrix;
   }
+
 
   getObjects() {
     return this.objects;

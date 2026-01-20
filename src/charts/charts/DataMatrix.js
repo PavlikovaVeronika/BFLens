@@ -6,6 +6,7 @@ export default class DataMatrix {
 
         this.dataStore = dataStore;
         this.data = this.dataStore.getData();
+        this.factors = this.dataStore.getFactors();
 
         this.noOfRows = this.data.length;
         this.noOfCols = this.data[0].length;
@@ -27,7 +28,6 @@ export default class DataMatrix {
         this.height = height;
 
         this.activeFactor = null;
-        this.activeFactorColor = null;
         this.tooltip = null;
 
         this.initDOM();
@@ -77,13 +77,19 @@ export default class DataMatrix {
     }
 
     initSVG() {
+        //this.maxAttrHeight = d3.max(this.attributesLabels, d => this.measureText(d).width) + 20;
+        //this.maxObjWidth = d3.max(this.objectsLabels, d => this.measureText(d).width) + 20;
+
+        this.maxAttrHeight = this.attributeSize * this.cellSize; 
+        this.maxObjWidth = this.objectSize * this.cellSize;
+
         this.svgContext
             .attr("width", (this.noOfCols * this.cellSize) + (this.gap * this.noOfCols))
             .attr("height", (this.noOfRows * this.cellSize) + (this.gap * this.noOfRows));
 
         this.svgAttributes
             .attr("width", (this.noOfCols * this.cellSize) + (this.gap * this.noOfCols))
-            .attr("height", this.attributeSize * this.cellSize);
+            .attr("height", this.maxAttrHeight);
 
         this.svgObjects
             .attr("width", this.objectSize * this.cellSize)
@@ -99,7 +105,13 @@ export default class DataMatrix {
         const panelWidth = this.panelContainer.offsetWidth;
         const remainingWidth = panelWidth - objectWidth;
 
-        this.visibleCells = remainingWidth / this.cellSize;
+        const objectHeight = parseFloat(getComputedStyle(objectNode).width);
+        const panelHeight = this.panelContainer.offsetHeight;
+        const remainingHeight = panelHeight - objectHeight;
+
+        const visiblePart = Math.max(remainingWidth, remainingHeight);
+
+        this.visibleCells = visiblePart / this.cellSize;
 
     }
 
@@ -109,6 +121,8 @@ export default class DataMatrix {
         const startY = Math.floor(scrollY / (this.cellSize + this.gap));
         const endX = Math.min(this.noOfCols, startX + this.visibleCells);
         const endY = Math.min(this.noOfRows, startY + this.visibleCells);
+
+        console.log(startX, startY, endX, endY)
 
         // clear old render
         this.svgContext.selectAll("rect").remove();
@@ -127,7 +141,6 @@ export default class DataMatrix {
     }
 
     renderAttributes() {
-        const self = this;
         const padding = 4; // mezera od spodního kraje rectu
 
         const data = d3.range(this.attributesLabels.length);
@@ -137,10 +150,10 @@ export default class DataMatrix {
             .selectAll("rect")
             .data(data)
             .join("rect")
-            .attr("x", d => d * (self.cellSize + self.gap) + self.gap)
+            .attr("x", d => d * (this.cellSize + this.gap) + this.gap)
             .attr("y", 0)
-            .attr("width", self.cellSize)
-            .attr("height", self.cellSize * self.attributeSize)
+            .attr("width", this.cellSize)
+            .attr("height", this.maxAttrHeight)
             .attr("fill", "white")
             .attr("id", d => "attribute-" + d);
 
@@ -149,15 +162,15 @@ export default class DataMatrix {
             .selectAll("text")
             .data(data)
             .join("text")
-            .attr("x", d => d * (self.cellSize + self.gap)) // levý okraj
-            .attr("y", self.cellSize * self.attributeSize) // spodní hrana rectu
+            .attr("x", d => d * (this.cellSize + this.gap)) // levý okraj
+            .attr("y", this.maxAttrHeight)
             .attr("text-anchor", "start")
             .attr("alignment-baseline", "middle")
             .attr(
                 "transform",
-                d => `rotate(-90, ${d * (self.cellSize + self.gap) + self.gap}, ${self.cellSize * self.attributeSize - (self.cellSize / 2)})`
+                d => `rotate(-90, ${d * (this.cellSize + this.gap) + this.gap}, ${this.maxAttrHeight - (this.cellSize / 2)})`
             )
-            .text(d => self.attributesLabels[d]);
+            .text(d => this.attributesLabels[d]);
     }
 
 
@@ -210,6 +223,7 @@ export default class DataMatrix {
                     .attr("width", this.cellSize)
                     .attr("height", this.cellSize)
                     .attr("fill", value ? "black" : "white")
+                    .attr("id", rowIndex + "-" + colIndex)
                     .attr("data-flag", value ? 1 : 0)
                     .on("mouseover", (event, d) => {
                         if (!this.activeFactor) {
@@ -262,9 +276,22 @@ export default class DataMatrix {
             .style("font-size", "12px");
     }
 
+    markFactor(factorIdx, mark) {
+        if (mark) {
+            // unmark active factor
+            if (this.activeFactor) {
+                this.markFactorWithColor(false);
+            }
+            this.activeFactor = this.factors[factorIdx];
+            this.markFactorWithColor(mark);
+        } else {
+            this.markFactorWithColor(mark);
+            this.activeFactor = null;
+        }
+    }
+
     markFactorWithColor(fill) {
-        if (!this.activeFactor) return;
-        const color = this.activeFactorColor;
+        const color = "#fff3b0";
         const objects = this.activeFactor.objects;
         const attributes = this.activeFactor.attributes;
 
@@ -292,6 +319,21 @@ export default class DataMatrix {
                 const col = parseInt(colStr, 10);
                 return objects.includes(row) && attributes.includes(col);
             })
-            .attr("fill", fill ? color : (d => d3.select(this).attr("data-flag") === "1" ? "black" : "white"));
+            .attr("fill", function () {
+                if (fill) return color;
+                return this.getAttribute("data-flag") === "1" ? "black" : "white";
+            });
     }
+
+    measureText(text) {
+        const font = "14px sans-serif"
+        if (!this._canvas) {
+            this._canvas = document.createElement("canvas");
+            this._context = this._canvas.getContext("2d");
+        }
+        this._context.font = font;
+        const metrics = this._context.measureText(text);
+        return { width: metrics.width, height: parseInt(font, 10) };
+    }
+
 }

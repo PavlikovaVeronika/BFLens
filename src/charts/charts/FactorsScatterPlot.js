@@ -12,7 +12,7 @@ import { DataStore } from "../DataStore.js";
 
 export default class FactorsScatterPlot {
 
-    constructor(element, dataStore, height = null, width = null) {
+    constructor(element, dataStore, height = 500, isZoomable = true) {
         this.element = element;
         this.dataStore = dataStore;
 
@@ -23,33 +23,27 @@ export default class FactorsScatterPlot {
         const factors = this.dataStore.getFactors();
 
         this.margin.left = this.getYAxisMaxWidth(factors);
-        this.margin.bottom = this.legendSize + 20;
+        this.margin.bottom = this.getYAxisMaxWidth(factors) + 20;
         this.margin.top = this.margin.bottom / 2;
         this.margin.right = this.margin.left / 2;
 
 
         // calculate max width for SVG
-        const columnWidth = 5; // approximate px for one column - strech svg
+        const columnWidth = 10;
         const padding = 5;
-        const totalWidth = this.getXAxisMaxWidth(factors) * 2 * (columnWidth + padding);
+        const totalWidth = factors.length * (columnWidth + padding);
+
+        const rect = this.element.getBoundingClientRect();
+        const clientWidth = rect.width;
+
+        let svgWidth = Math.max(clientWidth, totalWidth);
 
 
-        // calculate max height for SVG
-        const tickHeight = this.legendSize;
-        const tickCount = 10; // approximate count of ticks on y axis
-
-        const totalHeight = ((tickCount + padding) * tickHeight) + this.margin.top + this.margin.bottom;
-
-        //const width = 500;
-        //const height = 500;
-
-        //this.width = Math.max(width, totalWidth);
-        //this.height = Math.max(height, totalHeight);
-        this.width = width > 0 ? width : totalWidth;
-        this.height = height > 0 ? height : totalHeight;
+        this.width = totalWidth;
+        this.height = height;
 
         this.element.innerHTML = `
-            <svg width="${this.width}" height="${this.height}"></svg>
+            <svg width="${svgWidth}" height="${this.height}"></svg>
         `;
         this.svg = d3.select(this.element).select("svg");
 
@@ -58,6 +52,23 @@ export default class FactorsScatterPlot {
 
         this.chartGroup = this.svg.append("g")
             .attr("transform", `translate(${this.margin.left}, ${this.margin.top})`);
+
+        // zoom
+        if (isZoomable) {
+            this.zoomBehavior = d3.zoom()
+                .scaleExtent([0.5, 1.5])
+                .on("zoom", (event) => {
+                    this.chartGroup.attr("transform", event.transform);
+                });
+
+            this.svg.call(this.zoomBehavior);
+
+            this.svg.call(
+                this.zoomBehavior.transform,
+                d3.zoomIdentity.translate(this.margin.left, this.margin.top)
+            );
+        }
+
 
         this.draw();
     }
@@ -113,7 +124,7 @@ export default class FactorsScatterPlot {
                 this.tooltip
                     .style("display", "block")
                     .html(`
-          <div><b>Factor:</b> ${d.label}</div>
+          <div><b>Factor:</b> ${d.label + 1}</div>
           <div><b>Objects (X):</b> ${d.x}</div>
           <div><b>Attributes (Y):</b> ${d.y}</div>
         `)
@@ -142,6 +153,8 @@ export default class FactorsScatterPlot {
             .attr("transform", `translate(0, ${this.innerHeight})`)
             .call(d3.axisBottom(x))
             .selectAll("text")
+            .attr("transform", "rotate(-45)")
+            .style("text-anchor", "end")
             .style("font-size", `${this.legendSize}px`);
 
         // Y axis
@@ -181,6 +194,8 @@ export default class FactorsScatterPlot {
             const w = ctx.measureText(String(f.objects.length)).width;
             if (w > maxWidth) maxWidth = w;
         });
+
+        console.log(maxWidth);
 
         return maxWidth;
     }

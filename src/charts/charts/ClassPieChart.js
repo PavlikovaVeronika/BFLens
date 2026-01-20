@@ -16,7 +16,7 @@ export default class ClassPieChart {
    * @param {DataStore} dataStore - Object holding all neccessary data
    */
 
-  constructor(element, dataStore, size = 500) {
+  constructor(element, dataStore, size = 500, isZoomable = true) {
     this.element = element;
     this.dataStore = dataStore;
 
@@ -32,6 +32,9 @@ export default class ClassPieChart {
 
     this.radius = Math.min(this.width, this.height) / 2 - this.margin;
 
+    const rect = this.element.getBoundingClientRect();
+    const clientWidth = rect.width;
+
     // calculate SVG width and height
     const classDistribution = this.dataStore.getClassDistributionInPercentage();
     const keys = classDistribution.map(d => d.label);
@@ -40,18 +43,23 @@ export default class ClassPieChart {
     let svgHeight = Math.max(legendHeight, this.height);
 
     let legendMaxKeyWidth = this.getLegendMaxWidth(classDistribution);
-    let svgWidth = Math.max(this.width, ((this.radius * 2) + (this.margin * 2) + this.legendLeftMargin + legendMaxKeyWidth))
+    let svgWidth = Math.max(clientWidth, ((this.radius * 2) + (this.margin * 2) + this.legendLeftMargin + legendMaxKeyWidth))
 
 
     // container
     this.element.innerHTML = `
-      <svg width="${svgWidth}" height="${svgHeight}"></svg>
-    `;
+  <svg width="${svgWidth}" height="${svgHeight}"></svg>
+`;
 
     // SVG
     this.svg = d3.select(this.element).select("svg");
 
-    // PieChart in the middle of SVG
+    // root group controlled by zoom
+    this.rootGroup = this.svg.append("g");
+
+    // chart group (pie + legend)
+    this.chartGroup = this.rootGroup.append("g");
+
     this.chartGroup = this.svg.append("g")
       .attr("transform", `translate(${this.width / 2}, ${this.height / 2})`);
 
@@ -64,6 +72,22 @@ export default class ClassPieChart {
     this.arc = d3.arc()
       .innerRadius(0)
       .outerRadius(this.radius);
+
+    // zoom behavior
+    if (isZoomable) {
+      this.zoom = d3.zoom()
+        .scaleExtent([0.5, 1.5])
+        .on("zoom", (event) => {
+          this.chartGroup.attr("transform", event.transform);
+        });
+
+      this.svg.call(this.zoom);
+
+      this.svg.call(
+        this.zoom.transform,
+        d3.zoomIdentity.translate(this.width / 2, this.height / 2)
+      );
+    }
 
     this.draw();
   }

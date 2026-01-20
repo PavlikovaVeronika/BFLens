@@ -24,7 +24,7 @@ export default function FactorsSimilarityHeatmap() {
                 </div>
 
                 <ChartContainer
-                    type="factorssimilarity"
+                    type="factorsSimilarity"
                     renderChart={(charts, ref, size, options = {}) => {
                         if (!selectedFile) return;
                         const { selectAll = false, similarityTarget = null, calcObj = false } = options;

@@ -22,22 +22,22 @@ export default class Charts {
 
     async makeClassPieChart(element, options = {}) {
         if (!this.loaded) await this.loadPromise;
-        return new ClassPieChart(element, this.dataStore, options.size);
+        return new ClassPieChart(element, this.dataStore, options.size, options.isZoomable,);
     }
 
     async makeFactorAttributeStackedBarchart(element, factorIdx, options = {}) {
         if (!this.loaded) await this.loadPromise;
-        return new FactorAttributeStackedBarchart(element, factorIdx, this.dataStore, options.height, options.selectAll);
+        return new FactorAttributeStackedBarchart(element, factorIdx, this.dataStore, options.size, options.isZoomable, options.selectAll);
     }
 
     async makeFactorClassStackedBarchart(element, factorIdx, options = {}) {
         if (!this.loaded) await this.loadPromise;
-        return new FactorClassStackedBarchart(element, factorIdx, this.dataStore, options.height, options.selectAll);
+        return new FactorClassStackedBarchart(element, factorIdx, this.dataStore, options.size, options.isZoomable, options.selectAll);
     }
 
     async makeFactorsClassesStackedBarchart(element, options = {}) {
         if (!this.loaded) await this.loadPromise;
-        return new FactorsClassesStackedBarchart(element, this.dataStore, options.height);
+        return new FactorsClassesStackedBarchart(element, this.dataStore, options.size, options.isZoomable,);
     }
 
     async makeFactorsSimilarityHeatmap(element, options = {}) {
@@ -47,7 +47,7 @@ export default class Charts {
 
     async makeFactorsScatterPlot(element, options = {}) {
         if (!this.loaded) await this.loadPromise;
-        return new FactorsScatterPlot(element, this.dataStore, options.height, options.width);
+        return new FactorsScatterPlot(element, this.dataStore, options.size, options.size, options.isZoomable,);
     }
 
     async makeDataMatrix(element, options = {}) {

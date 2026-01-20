@@ -24,6 +24,7 @@ export default function Class() {
         </div>
 
         <ChartContainer
+          type="classPieChart"
           renderChart={(charts, ref, size) => {
             if (!selectedFile) return;
             charts.makeClassPieChart(ref, { size: size });
@@ -45,6 +46,7 @@ export default function Class() {
         </div>
 
         <ChartContainer
+          type="factorsClasses"
           renderChart={(charts, ref, size) => {
             if (!selectedFile) return;
             charts.makeFactorsClassesStackedBarchart(ref, { size: size });

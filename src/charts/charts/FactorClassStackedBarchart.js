@@ -12,7 +12,7 @@ import { DataStore } from "../DataStore.js";
 
 export default class FactorClassStackedBarchart {
 
-  constructor(element, factorIdx, dataStore, height = 500, selectAll = true) {
+  constructor(element, factorIdx, dataStore, height = 500, isZoomable = true, selectAll = true) {
     this.element = element;
     this.dataStore = dataStore;
     this.factorIdx = factorIdx;
@@ -24,11 +24,9 @@ export default class FactorClassStackedBarchart {
 
     let distribution = this.dataStore.getFactorClassDistributionInNumbers(this.factorIdx);
 
-    if(!selectAll) {
+    if (!selectAll) {
       distribution = distribution.filter(d => d.value > 0);
     }
-
-    console.log(distribution);
 
     this.margin.left = this.getYAxisMaxWidth(distribution);
     this.margin.bottom = this.getXAxisMaxHeight(distribution);
@@ -54,6 +52,22 @@ export default class FactorClassStackedBarchart {
 
     this.chartGroup = this.svg.append("g")
       .attr("transform", `translate(${this.margin.left}, ${this.margin.top})`);
+
+    //zoom
+    if (isZoomable) {
+      this.zoomBehavior = d3.zoom()
+        .scaleExtent([0.5, 1.5])
+        .on("zoom", (event) => {
+          this.chartGroup.attr("transform", event.transform);
+        });
+
+      this.svg.call(this.zoomBehavior);
+
+      this.svg.call(
+        this.zoomBehavior.transform,
+        d3.zoomIdentity.translate(this.margin.left, this.margin.top)
+      );
+    }
 
     this.draw();
   }

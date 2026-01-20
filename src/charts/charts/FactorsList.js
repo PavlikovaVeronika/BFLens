@@ -109,7 +109,6 @@ export default class FactorsList {
                     this.activeCheckbox.checked = false;
                 }
 
-                checkbox.checked = true;
                 this.activeCheckbox = checkbox;
                 this.activeFactor = factor;
 
@@ -130,6 +129,8 @@ export default class FactorsList {
             };
 
             checkbox.addEventListener("change", () => {
+                console.log("checking");
+                console.log(checkbox.checked);
                 checkbox.checked ? selectFactor() : unSelectFactor();
             });
 

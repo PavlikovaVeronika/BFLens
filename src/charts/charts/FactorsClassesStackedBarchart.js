@@ -12,7 +12,7 @@ import { DataStore } from "../DataStore.js";
 
 export default class FactorsClassesStackedBarchart {
 
-    constructor(element, dataStore, height = 500) {
+    constructor(element, dataStore, height = 500, isZoomable = true) {
         this.element = element;
         this.dataStore = dataStore;
 
@@ -31,14 +31,18 @@ export default class FactorsClassesStackedBarchart {
 
         // calculate max width for SVG
         const columnWidth = 40; // approximate px for one column - strech svg
-        const totalWidth = distribution.length * columnWidth;
+        const totalWidth = distribution.length * columnWidth + this.margin.left + this.margin.right;
 
+        const rect = this.element.getBoundingClientRect();
+        const clientWidth = rect.width;
 
-        this.width = totalWidth + this.margin.left + this.margin.right;
+        let svgWidth = Math.max(clientWidth, totalWidth);
+
+        this.width = totalWidth;
         this.height = height;
 
         this.element.innerHTML = `
-      <svg width="${this.width}" height="${this.height}"></svg>
+      <svg width="${svgWidth}" height="${this.height}"></svg>
     `;
         this.svg = d3.select(this.element).select("svg");
 
@@ -47,6 +51,22 @@ export default class FactorsClassesStackedBarchart {
 
         this.chartGroup = this.svg.append("g")
             .attr("transform", `translate(${this.margin.left}, ${this.margin.top})`);
+
+        // zoom
+        if (isZoomable) {
+            this.zoomBehavior = d3.zoom()
+                .scaleExtent([0.5, 1.5])
+                .on("zoom", (event) => {
+                    this.chartGroup.attr("transform", event.transform);
+                });
+
+            this.svg.call(this.zoomBehavior);
+
+            this.svg.call(
+                this.zoomBehavior.transform,
+                d3.zoomIdentity.translate(this.margin.left, this.margin.top)
+            );
+        }
 
         this.draw();
     }
