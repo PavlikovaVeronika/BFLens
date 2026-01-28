@@ -45,7 +45,7 @@ export default function FileInfo() {
     const factors = fileData?.factors || [];
     const factorsCount = factors.length;
 
-    const classes = fileData?.classDescription || [];
+    const classes = [].concat(fileData?.classDescription ?? []);
     const classesCount = classes.length;
 
 

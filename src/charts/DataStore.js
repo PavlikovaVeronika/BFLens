@@ -13,7 +13,7 @@ export class DataStore {
     this.factors = json.factors;
     if (json.class && json.classDescription) {
       this.class = json.class;
-      this.classDescription = json.classDescription;
+      this.classDescription = [].concat(json.classDescription ?? []);
     }
   }
 

@@ -104,16 +104,21 @@ export default class FactorsSimilarityHeatmap {
 
         this.svg = d3.select("#heatmap-svg");
 
+        let tooltipBackground = "rgba(0,0,0,0.7)";
+        let tooltipColor = "#fff";
+        let tooltipRadius = "4px";
+        let tooltipFontSize = "14px";
+
         this.tooltip = d3.select("body")
             .append("div")
             .style("position", "absolute")
+            .style("padding", "0.5em 0.5em")
+            .style("background", tooltipBackground)
+            .style("color", tooltipColor)
+            .style("border-radius", tooltipRadius)
             .style("pointer-events", "none")
-            .style("opacity", 0)
-            .style("background", "rgba(0,0,0,0.7)")
-            .style("color", "#fff")
-            .style("padding", "5px")
-            .style("border-radius", "4px")
-            .style("font-size", "12px");
+            .style("font-size", tooltipFontSize)
+            .style("display", "none");
     }
 
 
@@ -259,7 +264,7 @@ export default class FactorsSimilarityHeatmap {
                     .attr("stroke-width", 2);
 
                 this.tooltip
-                    .style("opacity", 1)
+                    .style("display", "block")
                     .html(`
                         <b>X:</b> ${d.c + 1}<br/>
                         <b>Y:</b> ${d.r + 1}<br/>
@@ -275,7 +280,7 @@ export default class FactorsSimilarityHeatmap {
                 d3.select(event.currentTarget)
                     .attr("stroke", "#ccc")
                     .attr("stroke-width", 1);
-                this.tooltip.style("opacity", 0);
+                this.tooltip.style("display", "none");
             });
     }
 }

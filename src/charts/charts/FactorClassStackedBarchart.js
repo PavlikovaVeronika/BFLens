@@ -103,7 +103,7 @@ export default class FactorClassStackedBarchart {
       .range([this.innerHeight, 0]);
 
     // tooltip
-    this.tooltip = d3.select(this.element)
+    this.tooltip = d3.select("body")
       .append("div")
       .style("position", "absolute")
       .style("padding", "0.5em 0.5em")

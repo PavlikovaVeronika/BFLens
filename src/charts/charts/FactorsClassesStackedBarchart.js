@@ -114,7 +114,7 @@ export default class FactorsClassesStackedBarchart {
             .range([this.innerHeight, 0]);
 
         // tooltip
-        this.tooltip = d3.select(this.element)
+        this.tooltip = d3.select("body")
             .append("div")
             .style("position", "absolute")
             .style("padding", "0.5em")
@@ -123,7 +123,9 @@ export default class FactorsClassesStackedBarchart {
             .style("border-radius", tooltipRadius)
             .style("pointer-events", "none")
             .style("font-size", tooltipFontSize)
-            .style("display", "none");
+            .style("display", "none")
+            .style("z-index", 1000);
+
 
 
         const colorScale = d3.scaleOrdinal()
@@ -151,6 +153,8 @@ export default class FactorsClassesStackedBarchart {
             .on("mouseover", (event, d) => {
                 const className = event.currentTarget.parentNode.__data__.key;
                 const value = d.data[className];
+
+                console.log(this.tooltip.node());
 
                 this.tooltip
                     .style("display", "block")
