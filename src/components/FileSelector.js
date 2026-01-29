@@ -11,8 +11,7 @@ export default function FileSelector({ files }) {
     const wrapperRef = useRef(null);
 
     const visibleFiles = files
-        .filter((f) => f.toLowerCase().includes(filter.toLowerCase()))
-        .slice(0, 5);
+        .filter((f) => f.toLowerCase().includes(filter.toLowerCase()));
 
     useEffect(() => {
         if (!selectedFile) return;

@@ -25,7 +25,7 @@ export default class ClassPieChart {
     this.height = size;
     this.margin = 10;
     this.legendLeftMargin = 40;             // left margin dividing piechart and legend
-    this.legendMargin = 25;                 // height of row in the legend including top margin
+    this.legendMargin = 30;                 // height of row in the legend including top margin
     this.dotSize = (this.legendMargin) / 2; // size of dots in legend
     this.legendTextLeftMargin = 5           // left maergin dividing dots and text in legend
 
@@ -134,7 +134,9 @@ export default class ClassPieChart {
       .append("text")
       .attr("class", "legend-label")
       .attr("x", legendX + this.dotSize + this.legendTextLeftMargin)
-      .attr("y", (d, i) => legendYStart + i * this.legendMargin + this.dotSize)
+      .attr("y", (d, i) =>
+        legendYStart + i * this.legendMargin + this.dotSize * 0.75
+      )
       .text(d => `${d.label}, ${d.value} %`)
       .style("font-size", `${this.dotSize}px`)
       .style("font-weight", "normal");

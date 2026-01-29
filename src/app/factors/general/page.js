@@ -10,6 +10,29 @@ export default function General() {
     const { selectedFile } = useFile();
     const dataMatrixRef = useRef(null);
 
+    const [fileData, setFileData] = useState(null);
+
+    useEffect(() => {
+        if (!selectedFile) {
+            setFileData(null);
+            return;
+        }
+
+        fetch(`/data/${selectedFile}`)
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("File not found");
+                }
+                return res.json();
+            })
+            .then((json) => {
+                setFileData(json);
+            })
+            .catch((err) => {
+                setFileData(null);
+            });
+    }, [selectedFile]);
+
 
     return (
         <div className="flex flex-col py-5">
@@ -96,6 +119,29 @@ export default function General() {
                     }}
                 />
             </div>
+
+            {fileData?.coverage != null && (
+                <div className="flex flex-col mb-6">
+                    <div className="mb-4">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                            Coverage of factors
+                        </h2>
+
+                        <Description
+                            text={
+                                "The following scatter plot shows the factor coverage curve of the data. This means how many 1's in the original data are already covered by the factors."
+                            }
+                        />
+                    </div>
+                    <ChartContainer
+                        type="factorsCoveragePlot"
+                        renderChart={(charts, ref, size) => {
+                            if (!selectedFile) return;
+                            charts.makeFactorsCoveragePlot(ref, { size: size });
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 }

@@ -7,6 +7,8 @@ import FactorsSimilarityHeatmap from './charts/FactorsSimilarityHeatmap.js';
 import FactorsScatterPlot from './charts/FactorsScatterPlot.js';
 import DataMatrix from './charts/DataMatrix.js';
 import FactorsList from './charts/FactorsList.js';
+import FactorsCoveragePlot from './charts/FactorsCoveragePlot.js';
+import FactorsMDS from './charts/FactorsMDS.js';
 
 export default class Charts {
     constructor(dataFile) {
@@ -58,6 +60,16 @@ export default class Charts {
     async makeFactorsList(element, options = {}) {
         if (!this.loaded) await this.loadPromise;
         return new FactorsList(element, this.dataStore, options.size, options.markFactorCallback);
+    }
+
+    async makeFactorsCoveragePlot(element, options = {}) {
+        if (!this.loaded) await this.loadPromise;
+        return new FactorsCoveragePlot(element, this.dataStore, options.size, options.size, options.isZoomable,);
+    }
+
+    async makeFactorsMDS(element, options = {}) {
+        if (!this.loaded) await this.loadPromise;
+        return new FactorsMDS(element, this.dataStore, options.size, options.size, options.isZoomable,);
     }
 
 }

@@ -10,7 +10,7 @@ import * as d3 from "d3";
 import { DataStore } from "../DataStore.js";
 
 
-export default class FactorsScatterPlot {
+export default class FactorsCoveragePlot {
 
     constructor(element, dataStore, height = 500, isZoomable = true) {
         this.element = element;
@@ -20,10 +20,11 @@ export default class FactorsScatterPlot {
 
         this.margin = { top: 0, right: 0, bottom: 0, left: 0 };
 
-        const factors = this.dataStore.getFactors();
+        this.factors = this.dataStore.getFactors();
+        this.coverage = this.dataStore.getCoverage();
 
-        this.margin.left = this.getYAxisMaxWidth(factors);
-        this.margin.bottom = this.getYAxisMaxWidth(factors) + 20;
+        this.margin.left = this.getYAxisMaxWidth(this.factors);
+        this.margin.bottom = this.getYAxisMaxWidth(this.factors) + 20;
         this.margin.top = this.margin.bottom / 2;
         this.margin.right = this.margin.left / 2;
 
@@ -31,7 +32,7 @@ export default class FactorsScatterPlot {
         // calculate max width for SVG
         const columnWidth = 20;
         const padding = 5;
-        const totalWidth = factors.length * (columnWidth + padding);
+        const totalWidth = this.factors.length * (columnWidth + padding);
 
         const rect = this.element.getBoundingClientRect();
         const clientWidth = rect.width;
@@ -74,25 +75,27 @@ export default class FactorsScatterPlot {
     }
 
     draw() {
-        let factorColor = "#41b8d5";
-        let tooltipBackground = "rgba(0,0,0,0.7)";
-        let tooltipColor = "#fff";
-        let tooltipRadius = "4px";
-        let tooltipFontSize = "14px";
+        const factorColor = "#41b8d5";
+        const lineColor = "#41b8d5";
+        const tooltipBackground = "rgba(0,0,0,0.7)";
+        const tooltipColor = "#fff";
+        const tooltipRadius = "4px";
+        const tooltipFontSize = "14px";
 
-        const factors = this.dataStore.getFactors();
+        const factors = this.factors;
+        const coverage = this.coverage;
 
+        // each factor has a coverage
         const points = factors.map((d, i) => ({
             label: i,
-            x: d.objects.length,
-            y: d.attributes.length,
+            x: i + 1,
+            y: coverage[i],
         }));
 
         // x and y scales
-        const x = d3.scaleLinear()
-            .domain([0, d3.max(points, d => d.x)])
-            .range([0, this.innerWidth - this.getXAxisMaxWidth(factors)])
-            .nice();
+        const x = d3.scalePoint()
+            .domain(d3.range(1, points.length + 1))
+            .range([0, this.innerWidth - this.getXAxisMaxWidth(factors)]);
 
         const y = d3.scaleLinear()
             .domain([0, d3.max(points, d => d.y)])
@@ -111,7 +114,20 @@ export default class FactorsScatterPlot {
             .style("font-size", tooltipFontSize)
             .style("display", "none");
 
-        // scatter
+        // LINE generator
+        const line = d3.line()
+            .x(d => x(d.x))
+            .y(d => y(d.y));
+
+        // Draw the line connecting points
+        this.chartGroup.append("path")
+            .datum(points)
+            .attr("fill", "none")
+            .attr("stroke", lineColor)
+            .attr("stroke-width", 2)
+            .attr("d", line);
+
+        // Draw points
         this.chartGroup.selectAll("circle.point")
             .data(points)
             .join("circle")
@@ -124,10 +140,9 @@ export default class FactorsScatterPlot {
                 this.tooltip
                     .style("display", "block")
                     .html(`
-          <div><b>Factor:</b> ${d.label + 1}</div>
-          <div><b>Objects (X):</b> ${d.x}</div>
-          <div><b>Attributes (Y):</b> ${d.y}</div>
-        `)
+                    <div><b>Factor:</b> ${d.label + 1}</div>
+                    <div><b>Coverage:</b> ${d.y}</div>
+                `)
                     .style("left", (event.pageX + 10) + "px")
                     .style("top", (event.pageY + 10) + "px");
 
@@ -163,7 +178,6 @@ export default class FactorsScatterPlot {
             .selectAll("text")
             .style("font-size", `${this.legendSize}px`);
     }
-
 
 
     getYAxisMaxWidth(factors) {

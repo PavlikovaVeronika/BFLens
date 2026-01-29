@@ -15,6 +15,13 @@ export class DataStore {
       this.class = json.class;
       this.classDescription = [].concat(json.classDescription ?? []);
     }
+    if(json.coverage) {
+      this.coverage = json.coverage;
+    }
+    if(json.mds) {
+      this.mds = json.mds;
+    }
+    
   }
 
   getData() {
@@ -60,6 +67,14 @@ export class DataStore {
 
   getClassDescription() {
     return this.classDescription;
+  }
+
+  getCoverage() {
+    return this.coverage;
+  }
+
+  getMDS() {
+    return this.mds;
   }
 
   getClassDistributionInPercentage() {

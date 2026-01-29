@@ -9,7 +9,7 @@ export default function Info() {
                     <h3 className="text-xl font-semibold mt-2 mb-1">General information</h3>
                     <div>
                         <p><span className="font-semibold">Version:</span> 1.0.0</p>
-                        <p><span className="font-semibold">Developers:</span> Martin Trnečka, Veronika Pavlíková</p>
+                        <p><span className="font-semibold">Developers:</span> Veronika Pavlíková, Martin Trnečka</p>
                         <p><span className="font-semibold">Institution:</span> Palacký University Olomouc, Department of Computer Science</p>
                     </div>
                 </div>
@@ -17,7 +17,7 @@ export default function Info() {
                 <div className="mb-8">
                     <h3 className="text-xl font-semibold mt-2 mb-1">Goal of the Application</h3>
                     <p className="text-gray-700">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                        The goal of the BMFLy web application is to visualize the results of Boolean matrix factorization (BMF) and simplify the interpretation of factors. The user has several graphs available that visualize factors with respect to different parameters such as overlap with the original data or their similarity.
                     </p>
                 </div>
 
@@ -26,8 +26,11 @@ export default function Info() {
                     <p className="text-gray-700">
                         If the application is not working as expected, try refreshing your browser
                         or ensuring JavaScript is enabled. For persistent issues, contact the developers:{" "}
-                        <a href="mailto:support@example.com" className="text-blue-600 hover:underline">
-                            support@example.com
+                        <a href="mailto:veronika.pavlikova@upol.cz" className="text-blue-600 hover:underline">
+                            veronika.pavlikova@upol.com
+                        </a>{" "}or{" "}
+                        <a href="mailto:martin.trnecka@upol.cz" className="text-blue-600 hover:underline">
+                            martin.trnecka@upol.com
                         </a>.
                     </p>
                 </div>
