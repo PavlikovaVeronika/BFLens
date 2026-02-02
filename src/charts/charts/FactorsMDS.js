@@ -75,6 +75,7 @@ export default class FactorsMDS {
         if (mds.length > 0 && mds[0].length === 3) {
             //console.log("3D");
             //this.draw3D();
+            this.draw2D();
         } else {
             this.draw2D();
         }
@@ -93,7 +94,8 @@ export default class FactorsMDS {
         const points = factors.map((d, i) => ({
             label: i,
             x: mds[i][0],
-            y: mds[i][1]
+            y: mds[i][1],
+            z: mds[i][2],
         }));
 
         const x = d3.scaleLinear()
@@ -132,7 +134,7 @@ export default class FactorsMDS {
                     .style("display", "block")
                     .html(`
                     <div><b>Factor:</b> ${d.label + 1}</div>
-                    <div><b>Coords:</b> [${d.x.toFixed(2)}, ${d.y.toFixed(2)}]</div>
+                    <div><b>Coords:</b> [${d.x.toFixed(2)}, ${d.y.toFixed(2)}, ${d.z.toFixed(2)}]</div>
                 `)
                     .style("left", (event.pageX + 10) + "px")
                     .style("top", (event.pageY + 10) + "px");
