@@ -6,6 +6,7 @@ import Charts from "../charts/Charts.js";
 
 export default function ChartContainer({ type, renderChart }) {
     const { selectedFile } = useFile();
+
     const chartRef = useRef(null);
     const [height, setHeight] = useState(500);
     const [similarityTarget, setSimilarityTarget] = useState("jaccard");
@@ -15,12 +16,30 @@ export default function ChartContainer({ type, renderChart }) {
     const [charts, setCharts] = useState(null);
     const [selectAll, setSelectAll] = useState(true);
 
+    const [mdsTarget, setMdsTarget] = useState("overlap");
+    const [mdsViewTarget, setMdsViewTarget] = useState("2D");
+    const [mdsOptions, setMdsOptions] = useState([]);
+
 
     useEffect(() => {
         if (!selectedFile) return;
 
         const c = new Charts(`/data/${selectedFile}`);
         setCharts(c);
+
+        fetch(`/data/${selectedFile}`)
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("File not found");
+                }
+                return res.json();
+            })
+            .then((json) => {
+                setMdsOptions(json?.similarities || [])
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }, [selectedFile]);
 
     useEffect(() => {
@@ -30,13 +49,15 @@ export default function ChartContainer({ type, renderChart }) {
         requestAnimationFrame(() => {
             renderChart(charts, chartRef.current, height, {
                 similarityTarget,
+                mdsTarget,
+                mdsViewTarget,
                 calcObj,
                 selectAll
             });
             setLoading(false);
         });
 
-    }, [charts, height, similarityTarget, calcObj, selectAll, renderChart]);
+    }, [charts, height, similarityTarget, mdsTarget, mdsViewTarget, calcObj, selectAll, renderChart]);
 
     // open chart in new window
     const openChartInNewWindow = () => {
@@ -140,6 +161,38 @@ export default function ChartContainer({ type, renderChart }) {
                             </select>
                         </div>
 
+                    </>
+                )}
+
+                {type === "factorsMDS" && (
+                    <>
+                        <div className="flex items-center gap-1">
+                            <label className="text-gray-700 font-medium">Similarity:</label>
+                            <select
+                                value={mdsTarget}
+                                onChange={(e) => setMdsTarget(e.target.value)}
+                                className="border rounded px-2 py-1"
+                            >
+                                {mdsOptions?.map(opt => (
+                                    <option key={opt} value={opt}>
+                                        {opt}
+                                    </option>
+                                ))}
+
+                            </select>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                            <label className="text-gray-700 font-medium">View as:</label>
+                            <select
+                                value={mdsViewTarget}
+                                onChange={(e) => setMdsViewTarget(e.target.value)}
+                                className="border rounded px-2 py-1"
+                            >
+                                <option key="2D" value="2D">2D</option>
+                                <option key="3D" value="3D">3D</option>
+                            </select>
+                        </div>
                     </>
                 )}
 

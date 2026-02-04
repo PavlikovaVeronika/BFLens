@@ -90,12 +90,12 @@ export default class FactorsScatterPlot {
 
         // x and y scales
         const x = d3.scaleLinear()
-            .domain([0, d3.max(points, d => d.x)])
+            .domain([0, d3.max(points, d => d.x) + 1])
             .range([0, this.innerWidth - this.getXAxisMaxWidth(factors)])
             .nice();
 
         const y = d3.scaleLinear()
-            .domain([0, d3.max(points, d => d.y)])
+            .domain([0, d3.max(points, d => d.y) + 1])
             .range([this.innerHeight, 0])
             .nice();
 

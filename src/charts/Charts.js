@@ -49,7 +49,7 @@ export default class Charts {
 
     async makeFactorsScatterPlot(element, options = {}) {
         if (!this.loaded) await this.loadPromise;
-        return new FactorsScatterPlot(element, this.dataStore, options.size, options.size, options.isZoomable,);
+        return new FactorsScatterPlot(element, this.dataStore, options.size, options.isZoomable,);
     }
 
     async makeDataMatrix(element, options = {}) {
@@ -64,12 +64,12 @@ export default class Charts {
 
     async makeFactorsCoveragePlot(element, options = {}) {
         if (!this.loaded) await this.loadPromise;
-        return new FactorsCoveragePlot(element, this.dataStore, options.size, options.size, options.isZoomable,);
+        return new FactorsCoveragePlot(element, this.dataStore, options.size, options.isZoomable,);
     }
 
     async makeFactorsMDS(element, options = {}) {
         if (!this.loaded) await this.loadPromise;
-        return new FactorsMDS(element, this.dataStore, options.size, options.size, options.isZoomable,);
+        return new FactorsMDS(element, this.dataStore, options.size, options.isZoomable, options.mdsTarget, options.mdsViewTarget);
     }
 
 }

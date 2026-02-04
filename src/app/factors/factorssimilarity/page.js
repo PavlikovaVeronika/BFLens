@@ -1,6 +1,6 @@
 "use client";
 
-import { React, useState, useEffect} from "react";
+import { React, useState, useEffect } from "react";
 import { useFile } from "../../../app/context/filecontext";
 import Description from "@/components/Description.js";
 import ChartContainer from "@/components/ChartContainer";
@@ -42,7 +42,7 @@ export default function FactorsSimilarityHeatmap() {
 
                         <Description
                             text={
-                                "The following scatter plot shows the similarity of factors on a graph using the MDS method, or multidimensional scaling. The resulting dimension is 2D."
+                                "The following scatter plot shows the similarity of factors on a graph using the Multidimensional scaling, also known as MDS. At the bottom of the panel, you can select the similarity for which you want to view the MDS."
                             }
                         />
                     </div>
@@ -51,12 +51,15 @@ export default function FactorsSimilarityHeatmap() {
                         type="factorsMDS"
                         renderChart={(charts, ref, size, options = {}) => {
                             if (!selectedFile) return;
-                            charts.makeFactorsMDS(ref, { size: size });
+                            console.log("in here");
+                            const { selectAll = false, similarityTarget = null, mdsTarget = null, mdsViewTarget = null, calcObj = false } = options;
+                            charts.makeFactorsMDS(ref, { size: size, mdsTarget: mdsTarget, mdsViewTarget: mdsViewTarget });
                         }}
                     />
                 </div>
             )}
 
+            {/* 
             <div className="flex flex-col mb-6">
                 <div className="mb-4">
                     <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -79,6 +82,7 @@ export default function FactorsSimilarityHeatmap() {
                     }}
                 />
             </div>
+             */}
         </div>
     );
 }

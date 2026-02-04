@@ -73,8 +73,8 @@ export class DataStore {
     return this.coverage;
   }
 
-  getMDS() {
-    return this.mds;
+  getMDS(similarity) {
+    return this.mds.find(m => m.name === similarity) || null;
   }
 
   getClassDistributionInPercentage() {

@@ -32,7 +32,7 @@ export default class FactorsCoveragePlot {
         // calculate max width for SVG
         const columnWidth = 20;
         const padding = 5;
-        const totalWidth = this.factors.length * (columnWidth + padding);
+        const totalWidth = (this.factors.length + 1) * (columnWidth + padding);
 
         const rect = this.element.getBoundingClientRect();
         const clientWidth = rect.width;
@@ -86,15 +86,18 @@ export default class FactorsCoveragePlot {
         const coverage = this.coverage;
 
         // each factor has a coverage
-        const points = factors.map((d, i) => ({
-            label: i,
-            x: i + 1,
-            y: coverage[i],
-        }));
+        const points = [
+            { label: 0, x: 0, y: 0 },
+            ...factors.map((d, i) => ({
+                label: i + 1,
+                x: i + 1,
+                y: coverage[i + 1],
+            }))
+        ];
 
         // x and y scales
         const x = d3.scalePoint()
-            .domain(d3.range(1, points.length + 1))
+            .domain(d3.range(0, points.length + 1))
             .range([0, this.innerWidth - this.getXAxisMaxWidth(factors)]);
 
         const y = d3.scaleLinear()
@@ -140,7 +143,7 @@ export default class FactorsCoveragePlot {
                 this.tooltip
                     .style("display", "block")
                     .html(`
-                    <div><b>Factor:</b> ${d.label + 1}</div>
+                    <div><b>Factor:</b> ${d.label}</div>
                     <div><b>Coverage:</b> ${d.y}</div>
                 `)
                     .style("left", (event.pageX + 10) + "px")
