@@ -16,9 +16,13 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
 export default class FactorsMDS {
 
-    constructor(element, dataStore, height = 500, isZoomable = true, mdsTarget = "overlap", mdsViewTarget = "2D") {
+    constructor(element, dataStore, height = 500, isZoomable = true, mdsTarget = "overlap", mdsViewTarget = "2D", activeFactorIdx = null) {
         this.element = element;
         this.dataStore = dataStore;
+
+        this.factorColor = "#41b8d5";
+        this.markColor = "#fcd600";
+        this.activeFactorIdx = activeFactorIdx;
 
         this.legendSize = 15;
 
@@ -26,7 +30,13 @@ export default class FactorsMDS {
 
         this.factors = this.dataStore.getFactors();
         const mdsStruct = this.dataStore.getMDS(mdsTarget);
+
+        if (mdsStruct == null) {
+            return;
+        }
+
         this.mds = mdsStruct.mds;
+        this.mdsViewTarget = mdsViewTarget;
 
         this.margin.left = this.getYAxisMaxWidth(this.factors);
         this.margin.bottom = this.getYAxisMaxWidth(this.factors) + 20;
@@ -82,10 +92,16 @@ export default class FactorsMDS {
         } else {
             this.draw2D();
         }
+
+        // handle active factor
+        console.log(this.activeFactorIdx);
+        if (this.activeFactorIdx != null) {
+            this.markFactor(this.activeFactorIdx, true);
+        }
     }
 
     draw2D() {
-        const factorColor = "#41b8d5";
+        const factorColor = this.factorColor;
         const tooltipBackground = "rgba(0,0,0,0.7)";
         const tooltipColor = "#fff";
         const tooltipRadius = "4px";
@@ -137,6 +153,7 @@ export default class FactorsMDS {
             .attr("cx", d => x(d.x))
             .attr("cy", d => y(d.y))
             .attr("r", 6)
+            .attr("id", d => d.label)
             .attr("fill", factorColor)
             .on("mouseover", (event, d) => {
                 this.tooltip
@@ -394,4 +411,45 @@ export default class FactorsMDS {
             scene.add(sprite);
         });
     }
+
+    markFactor(factorIdx, mark) {
+        if (mark) {
+            // unmark active factor
+            if (this.activeFactorIdx) {
+                this.markFactorWithColor(false);
+            }
+            this.activeFactorIdx = factorIdx;
+            this.markFactorWithColor(mark);
+        } else {
+            this.markFactorWithColor(mark);
+            this.activeFactorIdx = null;
+        }
+    }
+
+
+    markFactorWithColor(fill) {
+        const defaultColor = this.factorColor;
+        const activeColor = this.markColor;
+        const activeId = this.activeFactorIdx;
+
+        if (this.mds.length > 0 && this.mds[0].length === 3 && this.mdsViewTarget === "3D") {
+            // 3D
+            this.points3D.forEach((mesh, i) => {
+                if (i === activeId) {
+                    mesh.material.color.set(fill ? activeColor : defaultColor);
+                } else {
+                    mesh.material.color.set(defaultColor);
+                }
+            });
+        } else {
+            // 2D
+            this.chartGroup.selectAll("circle.point")
+                .attr("fill", d =>
+                    d.label === activeId
+                        ? (fill ? activeColor : defaultColor)
+                        : defaultColor
+                );
+        }
+    }
+
 }

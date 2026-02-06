@@ -69,7 +69,7 @@ export default class Charts {
 
     async makeFactorsMDS(element, options = {}) {
         if (!this.loaded) await this.loadPromise;
-        return new FactorsMDS(element, this.dataStore, options.size, options.isZoomable, options.mdsTarget, options.mdsViewTarget);
+        return new FactorsMDS(element, this.dataStore, options.size, options.isZoomable, options.mdsTarget, options.mdsViewTarget, options.activeFactorIdx);
     }
 
 }

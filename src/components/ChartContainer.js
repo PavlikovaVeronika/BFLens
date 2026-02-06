@@ -9,16 +9,16 @@ export default function ChartContainer({ type, renderChart }) {
 
     const chartRef = useRef(null);
     const [height, setHeight] = useState(500);
-    const [similarityTarget, setSimilarityTarget] = useState("jaccard");
-    const [calcObj, setCalcObj] = useState(false);
     const [inputHeight, setInputHeight] = useState(height);
     const [loading, setLoading] = useState(true);
     const [charts, setCharts] = useState(null);
     const [selectAll, setSelectAll] = useState(true);
 
-    const [mdsTarget, setMdsTarget] = useState("overlap");
+    const [mdsTarget, setMdsTarget] = useState("");
     const [mdsViewTarget, setMdsViewTarget] = useState("2D");
     const [mdsOptions, setMdsOptions] = useState([]);
+
+    const [similarityTarget, setSimilarityTarget] = useState("");
 
 
     useEffect(() => {
@@ -42,6 +42,15 @@ export default function ChartContainer({ type, renderChart }) {
             });
     }, [selectedFile]);
 
+
+    useEffect(() => {
+        if (mdsOptions && mdsOptions.length > 0) {
+            setSimilarityTarget(mdsOptions[0]);
+            setMdsTarget(mdsOptions[0]);
+        }
+    }, [mdsOptions]);
+
+    
     useEffect(() => {
         if (!charts || !chartRef.current || !renderChart) return;
         setLoading(true);
@@ -51,13 +60,12 @@ export default function ChartContainer({ type, renderChart }) {
                 similarityTarget,
                 mdsTarget,
                 mdsViewTarget,
-                calcObj,
                 selectAll
             });
             setLoading(false);
         });
 
-    }, [charts, height, similarityTarget, mdsTarget, mdsViewTarget, calcObj, selectAll, renderChart]);
+    }, [charts, height, similarityTarget, mdsTarget, mdsViewTarget, selectAll, renderChart, mdsOptions]);
 
     // open chart in new window
     const openChartInNewWindow = () => {
@@ -131,7 +139,7 @@ export default function ChartContainer({ type, renderChart }) {
             )}
 
             {/* panel */}
-            <div className="flex items-center justify-end gap-5 border-t border-gray-300 bg-gray-50 p-3">
+            <div className="flex flex-wrap items-center justify-end gap-5 border-t border-gray-300 bg-gray-50 p-3">
 
                 {type === "factorsSimilarity" && (
                     <>
@@ -142,25 +150,13 @@ export default function ChartContainer({ type, renderChart }) {
                                 onChange={(e) => setSimilarityTarget(e.target.value)}
                                 className="border rounded px-2 py-1"
                             >
-                                <option value="jaccard">jaccard</option>
-                                <option value="smc">smc</option>
+                                {mdsOptions?.map(opt => (
+                                    <option key={opt} value={opt}>
+                                        {opt}
+                                    </option>
+                                ))}
                             </select>
                         </div>
-
-
-
-                        <div className="flex items-center gap-1">
-                            <label className="text-gray-700 font-medium">Target:</label>
-                            <select
-                                value={calcObj}
-                                onChange={e => setCalcObj(e.target.value === "true")}
-                                className="border rounded px-2 py-1"
-                            >
-                                <option value={true}>objects</option>
-                                <option value={false}>attributes</option>
-                            </select>
-                        </div>
-
                     </>
                 )}
 
@@ -183,7 +179,7 @@ export default function ChartContainer({ type, renderChart }) {
                         </div>
 
                         <div className="flex items-center gap-1">
-                            <label className="text-gray-700 font-medium">View as:</label>
+                            <label className="text-gray-700 font-medium">View:</label>
                             <select
                                 value={mdsViewTarget}
                                 onChange={(e) => setMdsViewTarget(e.target.value)}

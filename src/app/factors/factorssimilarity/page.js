@@ -1,14 +1,16 @@
 "use client";
 
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useRef } from "react";
 import { useFile } from "../../../app/context/filecontext";
 import Description from "@/components/Description.js";
 import ChartContainer from "@/components/ChartContainer";
 
 export default function FactorsSimilarityHeatmap() {
     const { selectedFile } = useFile();
+    const mdsRef = useRef(null);
 
     const [fileData, setFileData] = useState(null);
+    const activeMdsFactorIdxRef = useRef(null);
 
     useEffect(() => {
         if (!selectedFile) {
@@ -47,19 +49,45 @@ export default function FactorsSimilarityHeatmap() {
                         />
                     </div>
 
-                    <ChartContainer
-                        type="factorsMDS"
-                        renderChart={(charts, ref, size, options = {}) => {
-                            if (!selectedFile) return;
-                            console.log("in here");
-                            const { selectAll = false, similarityTarget = null, mdsTarget = null, mdsViewTarget = null, calcObj = false } = options;
-                            charts.makeFactorsMDS(ref, { size: size, mdsTarget: mdsTarget, mdsViewTarget: mdsViewTarget });
-                        }}
-                    />
+                    <div className="flex gap-6">
+                        <div className="flex-1">
+                            <ChartContainer
+                                type="factorsMDS"
+                                renderChart={async (charts, ref, size, options = {}) => {
+                                    if (!selectedFile) return;
+                                    const { selectAll = false, similarityTarget = null, mdsTarget = null, mdsViewTarget = null } = options;
+                                    
+                                    const mds = await charts.makeFactorsMDS(ref, { size: size, mdsTarget: mdsTarget, mdsViewTarget: mdsViewTarget, activeFactorIdx: activeMdsFactorIdxRef.current });
+                                    mdsRef.current = mds;
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex-1">
+                            <ChartContainer
+                                type="factorsList"
+                                renderChart={(charts, ref, size) => {
+                                    if (!selectedFile) return;
+                                    charts.makeFactorsList(ref, {
+                                        size,
+                                        markFactorCallback: (factorIndex) => {
+                                            if (factorIndex != null) {
+                                                mdsRef.current?.markFactor(factorIndex, true);
+                                                activeMdsFactorIdxRef.current = factorIndex;
+                                            } else {
+                                                mdsRef.current?.markFactor(factorIndex, false);
+                                                activeMdsFactorIdxRef.current = null;
+                                            }
+
+                                        },
+                                    });
+                                }}
+                            />
+                        </div>
+                    </div>
                 </div>
             )}
 
-            {/* 
             <div className="flex flex-col mb-6">
                 <div className="mb-4">
                     <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -68,7 +96,7 @@ export default function FactorsSimilarityHeatmap() {
 
                     <Description
                         text={
-                            "This heat map shows the similarities between individual factors. To view specific values, hover over individual cells of the heat map - a tooltip with more detailed information will appear. In the control panel, you can also change the similarity metric and the comparison target (objects vs. attributes)."
+                            "This heat map shows the similarities between individual factors. To view specific values, hover over individual cells of the heat map - a tooltip with more detailed information will appear. In the control panel, you can also change the similarity metric."
                         }
                     />
                 </div>
@@ -77,12 +105,11 @@ export default function FactorsSimilarityHeatmap() {
                     type="factorsSimilarity"
                     renderChart={(charts, ref, size, options = {}) => {
                         if (!selectedFile) return;
-                        const { selectAll = false, similarityTarget = null, calcObj = false } = options;
-                        charts.makeFactorsSimilarityHeatmap(ref, { size: size, similarity: similarityTarget, calcObj: calcObj });
+                        const { selectAll = false, similarityTarget = null } = options;
+                        charts.makeFactorsSimilarityHeatmap(ref, { size: size, similarity: similarityTarget });
                     }}
                 />
             </div>
-             */}
         </div>
     );
 }

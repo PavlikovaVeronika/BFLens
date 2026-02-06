@@ -5,12 +5,11 @@ export default class FactorsSimilarityHeatmap {
         element,
         dataStore,
         height = 500,
-        similarity = "jaccard",
+        similarity = "overlap",
         calcObj = true
     ) {
         this.element = element;
         this.dataStore = dataStore;
-        this.similarity = similarity;
         this.calcObj = calcObj;
         this.height = height;
 
@@ -32,60 +31,16 @@ export default class FactorsSimilarityHeatmap {
         this.matrixSize =
             this.noOfFactors * (this.cellSize + this.gap);
 
-        this.similarityMatrix =
-            this.calculateSimilarityMatrix(this.similarity);
+        const simStruct = this.dataStore.getSimilarityMatrix(similarity);
+        if (simStruct == null) {
+            return;
+        }
+
+        this.similarityMatrix = simStruct.sim;
 
         this.initDOM();
         this.initSVG();
         this.render();
-    }
-
-    /* ------------------ similarity ------------------ */
-
-    calculateSimilarity(similarity, f1, f2) {
-        let setA, setB, total;
-
-        if (this.calcObj !== true) {
-            setA = new Set(f1.attributes);
-            setB = new Set(f2.attributes);
-            total = this.attributes.length;
-        } else {
-            setA = new Set(f1.objects);
-            setB = new Set(f2.objects);
-            total = this.objects.length;
-        }
-
-        if (similarity === "jaccard") {
-            const intersection =
-                [...setA].filter(x => setB.has(x)).length;
-            const union =
-                new Set([...setA, ...setB]).size;
-            return union === 0 ? 0 : intersection / union;
-        }
-
-        if (similarity === "smc") {
-            const intersection =
-                [...setA].filter(x => setB.has(x)).length;
-            const union =
-                new Set([...setA, ...setB]);
-            const zeros = total - union.size;
-            return (intersection + zeros) / total;
-        }
-    }
-
-    calculateSimilarityMatrix(similarity) {
-        const matrix = [];
-        for (let i = 0; i < this.noOfFactors; i++) {
-            matrix[i] = [];
-            for (let j = 0; j < this.noOfFactors; j++) {
-                matrix[i][j] = this.calculateSimilarity(
-                    similarity,
-                    this.factors[i],
-                    this.factors[j]
-                );
-            }
-        }
-        return matrix;
     }
 
     /* ------------------ DOM ------------------ */

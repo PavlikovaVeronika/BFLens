@@ -129,8 +129,6 @@ export default class FactorsList {
             };
 
             checkbox.addEventListener("change", () => {
-                console.log("checking");
-                console.log(checkbox.checked);
                 checkbox.checked ? selectFactor() : unSelectFactor();
             });
 

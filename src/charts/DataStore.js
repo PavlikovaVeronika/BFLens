@@ -21,6 +21,10 @@ export class DataStore {
     if(json.mds) {
       this.mds = json.mds;
     }
+
+    if(json.sims) {
+      this.sims = json.sims;
+    }
     
   }
 
@@ -75,6 +79,10 @@ export class DataStore {
 
   getMDS(similarity) {
     return this.mds.find(m => m.name === similarity) || null;
+  }
+
+  getSimilarityMatrix(similarity) {
+    return this.sims.find(s => s.name === similarity) || null;
   }
 
   getClassDistributionInPercentage() {
