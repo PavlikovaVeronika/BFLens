@@ -100,24 +100,59 @@ export default function General() {
                 </div>
             </div>
             <div className="flex flex-col mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                    Size of factors
+                </h2>
                 <div className="mb-4">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                        Size of factors
-                    </h2>
-
                     <Description
                         text={
                             "The following scatter plot shows the size of the factors in terms of the number of objects and attributes that belong to a given factor. The x-axis shows the number of objects, the y-axis shows the number of attributes. Hover over the individual points to see more information."
                         }
+                        className="mb-4"
+                    />
+
+                    <ChartContainer
+                        type="factorsScatterPlot"
+                        renderChart={(charts, ref, size) => {
+                            if (!selectedFile) return;
+                            charts.makeFactorsScatterPlot(ref, { size: size });
+                        }}
                     />
                 </div>
-                <ChartContainer
-                    type="factorsScatterPlot"
-                    renderChart={(charts, ref, size) => {
-                        if (!selectedFile) return;
-                        charts.makeFactorsScatterPlot(ref, { size: size });
-                    }}
-                />
+
+                <div className="mb-4">
+                    <Description
+                        text={
+                            "The following barchart shows the number of attributes that belong to a given factor. The x-axis lists factors, the y-axis shows the number of attributes. Hover over the individual bars to see more information."
+                        }
+                        className="mb-4"
+                    />
+
+                    <ChartContainer
+                        type="factorsAttributeBarchart"
+                        renderChart={(charts, ref, size) => {
+                            if (!selectedFile) return;
+                            charts.makeFactorsAttributeBarchart(ref, { size: size });
+                        }}
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <Description
+                        text={
+                            "The following barchart shows the number of objects that belong to a given factor. The x-axis lists factors, the y-axis shows the number of objects. Hover over the individual bars to see more information."
+                        }
+                        className="mb-4"
+                    />
+
+                    <ChartContainer
+                        type="factorsObjectBarchart"
+                        renderChart={(charts, ref, size) => {
+                            if (!selectedFile) return;
+                            charts.makeFactorsObjectBarchart(ref, { size: size });
+                        }}
+                    />
+                </div>
             </div>
 
             {fileData?.coverage != null && (

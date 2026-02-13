@@ -9,6 +9,8 @@ import DataMatrix from './charts/DataMatrix.js';
 import FactorsList from './charts/FactorsList.js';
 import FactorsCoveragePlot from './charts/FactorsCoveragePlot.js';
 import FactorsMDS from './charts/FactorsMDS.js';
+import FactorsAttributeBarchart from './charts/FactorsAttributeBarchart.js';
+import FactorsObjectBarchart from './charts/FactorsObjectBarchart.js';
 
 export default class Charts {
     constructor(dataFile) {
@@ -50,6 +52,16 @@ export default class Charts {
     async makeFactorsScatterPlot(element, options = {}) {
         if (!this.loaded) await this.loadPromise;
         return new FactorsScatterPlot(element, this.dataStore, options.size, options.isZoomable,);
+    }
+
+    async makeFactorsAttributeBarchart(element, options = {}) {
+        if (!this.loaded) await this.loadPromise;
+        return new FactorsAttributeBarchart(element, this.dataStore, options.size, options.isZoomable,);
+    }
+
+    async makeFactorsObjectBarchart(element, options = {}) {
+        if (!this.loaded) await this.loadPromise;
+        return new FactorsObjectBarchart(element, this.dataStore, options.size, options.isZoomable,);
     }
 
     async makeDataMatrix(element, options = {}) {

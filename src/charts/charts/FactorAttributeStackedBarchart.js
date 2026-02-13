@@ -1,5 +1,5 @@
 /**
- * @fileoverview Defines a FactorAttributeStackedBarchart component that visualizes the distribution of classes within a dataset.
+ * @fileoverview Defines a FactorAttributeStackedBarchart component that visualizes the distribution of attributes within a dataset.
  * Utilizes D3.js for rendering and interactive visualization.
  * 
  * @requires d3 - D3.js library for manipulating documents based on data.
