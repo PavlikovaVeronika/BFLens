@@ -139,6 +139,7 @@ export default class ClassPieChart {
       )
       .text(d => `${d.label}, ${d.value} %`)
       .style("font-size", `${this.dotSize}px`)
+      .style("font-family", "sans-serif")
       .style("font-weight", "normal");
 
     // dots in legend

@@ -50,7 +50,7 @@ export default function FactorsSimilarityHeatmap() {
                     </div>
 
                     <div className="flex gap-6">
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                             <ChartContainer
                                 type="factorsMDS"
                                 renderChart={async (charts, ref, size, options = {}) => {
@@ -63,7 +63,7 @@ export default function FactorsSimilarityHeatmap() {
                             />
                         </div>
 
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                             <ChartContainer
                                 type="factorsList"
                                 renderChart={(charts, ref, size) => {

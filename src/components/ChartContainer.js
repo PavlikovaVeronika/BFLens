@@ -20,6 +20,8 @@ export default function ChartContainer({ type, renderChart }) {
 
     const [similarityTarget, setSimilarityTarget] = useState("");
 
+    const [panelOpen, setPanelOpen] = useState(false);
+
 
     useEffect(() => {
         if (!selectedFile) return;
@@ -50,7 +52,7 @@ export default function ChartContainer({ type, renderChart }) {
         }
     }, [mdsOptions]);
 
-    
+
     useEffect(() => {
         if (!charts || !chartRef.current || !renderChart) return;
         setLoading(true);
@@ -138,107 +140,113 @@ export default function ChartContainer({ type, renderChart }) {
                 </div>
             )}
 
-            {/* panel */}
-            <div className="flex flex-wrap items-center justify-end gap-5 border-t border-gray-300 bg-gray-50 p-3">
-
-                {type === "factorsSimilarity" && (
-                    <>
-                        <div className="flex items-center gap-1">
-                            <label className="text-gray-700 font-medium">Similarity:</label>
-                            <select
-                                value={similarityTarget}
-                                onChange={(e) => setSimilarityTarget(e.target.value)}
-                                className="border rounded px-2 py-1"
-                            >
-                                {mdsOptions?.map(opt => (
-                                    <option key={opt} value={opt}>
-                                        {opt}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </>
-                )}
-
-                {type === "factorsMDS" && (
-                    <>
-                        <div className="flex items-center gap-1">
-                            <label className="text-gray-700 font-medium">Similarity:</label>
-                            <select
-                                value={mdsTarget}
-                                onChange={(e) => setMdsTarget(e.target.value)}
-                                className="border rounded px-2 py-1"
-                            >
-                                {mdsOptions?.map(opt => (
-                                    <option key={opt} value={opt}>
-                                        {opt}
-                                    </option>
-                                ))}
-
-                            </select>
-                        </div>
-
-                        <div className="flex items-center gap-1">
-                            <label className="text-gray-700 font-medium">View:</label>
-                            <select
-                                value={mdsViewTarget}
-                                onChange={(e) => setMdsViewTarget(e.target.value)}
-                                className="border rounded px-2 py-1"
-                            >
-                                <option key="2D" value="2D">2D</option>
-                                <option key="3D" value="3D">3D</option>
-                            </select>
-                        </div>
-                    </>
-                )}
-
-                {(type === "factorClass" || type === "factorAttribute") && (
-                    <div className="flex items-center gap-1">
-                        <input
-                            type="checkbox"
-                            id="selectAllOptions"
-                            checked={selectAll}
-                            onChange={(e) => setSelectAll(e.target.checked)}
-                        />
-                        <label
-                            htmlFor="selectAllOptions"
-                            className="cursor-pointer"
-                        >
-                            Select all options
-                        </label>
-                    </div>
-                )}
-
-
-                {/* Height control */}
-                <div className="flex items-center gap-1">
-                    <label className="text-gray-700 font-medium">Height:</label>
-                    <div className="flex items-stretch gap-1">
-                        <input
-                            type="number"
-                            value={inputHeight}
-                            onChange={(e) => setInputHeight(Number(e.target.value))}
-                            className="border rounded px-2 py-1 w-24"
-                        />
-                        <button
-                            onClick={() => setHeight(inputHeight)}
-                            className="bg-[#016bab] text-white px-3 py-1 rounded hover:bg-[#6c9dba] box-border uppercase"
-                        >
-                            set
-                        </button>
-                    </div>
-                </div>
-
-                {/* actions */}
-                {(type !== "dataMatrix" && type != "factorsList") && (
-                    <button className="text-gray-600 hover:text-gray-800 text-xl cursor-pointer" onClick={openChartInNewWindow}>
-                        <i className="ri-arrow-right-up-box-line"></i>
-                    </button>
-                )}
-                <button className="text-gray-600 hover:text-gray-800 text-xl cursor-pointer" onClick={downloadChartSVG}>
-                    <i className="ri-download-line"></i>
-                </button>
+            {/* toggle button pro panel */}
+            <div className="flex justify-end border-t border-gray-300 bg-gray-50 p-2 cursor-pointer" onClick={() => setPanelOpen(!panelOpen)}>
+                <span className="text-gray-600 flex items-center gap-1">
+                    More actions <i className={`ri-arrow-${panelOpen ? "up" : "down"}-s-line text-xl`}></i>
+                </span>
             </div>
+
+            {/* panel – accordeon */}
+            {panelOpen && (
+
+                <>
+                    <div className="flex flex-wrap items-center justify-end gap-5 border-t border-gray-300 bg-gray-50 p-3">
+
+                        {type === "factorsSimilarity" && (
+                            <div className="flex items-center gap-1">
+                                <label className="text-gray-700 font-medium">Similarity:</label>
+                                <select
+                                    value={similarityTarget}
+                                    onChange={(e) => setSimilarityTarget(e.target.value)}
+                                    className="border rounded px-2 py-1"
+                                >
+                                    {mdsOptions?.map(opt => (
+                                        <option key={opt} value={opt}>
+                                            {opt}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+
+                        {type === "factorsMDS" && (
+                            <>
+                                <div className="flex items-center gap-1">
+                                    <label className="text-gray-700 font-medium">Similarity:</label>
+                                    <select
+                                        value={mdsTarget}
+                                        onChange={(e) => setMdsTarget(e.target.value)}
+                                        className="border rounded px-2 py-1"
+                                    >
+                                        {mdsOptions?.map(opt => (
+                                            <option key={opt} value={opt}>
+                                                {opt}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                    <label className="text-gray-700 font-medium">View:</label>
+                                    <select
+                                        value={mdsViewTarget}
+                                        onChange={(e) => setMdsViewTarget(e.target.value)}
+                                        className="border rounded px-2 py-1"
+                                    >
+                                        <option key="2D" value="2D">2D</option>
+                                        <option key="3D" value="3D">3D</option>
+                                    </select>
+                                </div>
+                            </>
+                        )}
+
+                        {(type === "factorClass" || type === "factorAttribute") && (
+                            <div className="flex items-center gap-1">
+                                <input
+                                    type="checkbox"
+                                    id="selectAllOptions"
+                                    checked={selectAll}
+                                    onChange={(e) => setSelectAll(e.target.checked)}
+                                />
+                                <label htmlFor="selectAllOptions" className="cursor-pointer">Select all options</label>
+                            </div>
+                        )}
+
+                        {/* Height control */}
+                        <div className="flex items-center gap-1">
+                            <label className="text-gray-700">Height:</label>
+                            <div className="flex items-stretch gap-1">
+                                <input
+                                    type="number"
+                                    value={inputHeight}
+                                    onChange={(e) => setInputHeight(Number(e.target.value))}
+                                    className="border rounded px-2 py-1 w-24"
+                                />
+                                <button
+                                    onClick={() => setHeight(inputHeight)}
+                                    className="bg-[#016bab] text-white px-3 py-1 rounded hover:bg-[#6c9dba] box-border uppercase"
+                                >
+                                    set
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {/* actions */}
+                    {(type !== "dataMatrix" && type !== "factorsList") && (
+                        <div className="flex flex-wrap items-center justify-end gap-5 border-t border-gray-300 bg-gray-50 p-3">
+                            <button className="text-gray-600 hover:text-gray-800 text-xl cursor-pointer" onClick={openChartInNewWindow}>
+                                <i className="ri-arrow-right-up-box-line"></i>
+                            </button>
+
+                            <button className="text-gray-600 hover:text-gray-800 text-xl cursor-pointer" onClick={downloadChartSVG}>
+                                <i className="ri-arrow-down-box-line"></i>
+                            </button>
+                        </div>
+                    )}
+
+                </>
+            )}
 
         </div>
     );

@@ -19,6 +19,8 @@ export default class FactorsSimilarityHeatmap {
         this.attributes = this.dataStore.getAttributes();
         this.objects = this.dataStore.getObjects();
 
+        this.legendSize = 15;
+
         this.cellSize = 20;
         this.gap = 2;
 
@@ -148,6 +150,8 @@ export default class FactorsSimilarityHeatmap {
                 "transform",
                 `rotate(-90, ${this.cellSize / 2}, ${this.headerHeight - padding})`
             )
+            .style("font-size", `${this.legendSize}px`)
+            .style("font-family", "sans-serif")
             .text((d, i) => i + 1);
     }
 
@@ -178,6 +182,8 @@ export default class FactorsSimilarityHeatmap {
             .attr("y", this.cellSize / 2)
             .attr("text-anchor", "end")
             .attr("dominant-baseline", "middle")
+            .style("font-size", `${this.legendSize}px`)
+            .style("font-family", "sans-serif")
             .text((d, i) => i + 1);
     }
 

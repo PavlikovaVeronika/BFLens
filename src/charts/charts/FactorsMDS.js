@@ -39,7 +39,7 @@ export default class FactorsMDS {
         this.mdsViewTarget = mdsViewTarget;
 
         this.margin.left = this.getYAxisMaxWidth(this.factors);
-        this.margin.bottom = this.getYAxisMaxWidth(this.factors) + 20;
+        this.margin.bottom = this.getXAxisMaxWidth(this.factors) + 20;
         this.margin.top = this.margin.bottom / 2;
         this.margin.right = this.margin.left / 2;
 
@@ -47,7 +47,7 @@ export default class FactorsMDS {
         // calculate max width for SVG
         const columnWidth = 20;
         const padding = 5;
-        const totalWidth = this.factors.length * (columnWidth + padding);
+        const totalWidth = (this.factors.length * (columnWidth + padding));
 
         const rect = this.element.getBoundingClientRect();
         const clientWidth = rect.width;
@@ -55,10 +55,11 @@ export default class FactorsMDS {
         let svgWidth = Math.max(clientWidth, totalWidth);
 
 
-        this.width = totalWidth;
+        this.width = svgWidth;
         this.height = height;
 
         this.element.innerHTML = `
+
             <svg width="${svgWidth}" height="${this.height}"></svg>
         `;
         this.svg = d3.select(this.element).select("svg");
@@ -180,6 +181,7 @@ export default class FactorsMDS {
             .attr("y", d => y(d.y) + 4)
             .text(d => d.label + 1)
             .style("font-size", `${this.legendSize}px`)
+            .style("font-family", "sans-serif")
             .style("fill", "#000");
 
         // X & Y axes
@@ -191,6 +193,26 @@ export default class FactorsMDS {
         this.chartGroup.append("g")
             .call(d3.axisLeft(y))
             .style("font-size", `${this.legendSize}px`);
+
+        //top axis
+        this.chartGroup.append("line")
+            .attr("x1", 0)
+            .attr("y1", 0)
+            .attr("x2", this.innerWidth)
+            .attr("y2", 0)
+            .attr("stroke", "#000")
+            .attr("stroke-width", 1);
+
+
+        // Right axis
+        this.chartGroup.append("line")
+            .attr("x1", this.innerWidth)
+            .attr("y1", 0)
+            .attr("x2", this.innerWidth)
+            .attr("y2", this.innerHeight)
+            .attr("stroke", "#000")
+            .attr("stroke-width", 1);
+
     }
 
     draw3D() {

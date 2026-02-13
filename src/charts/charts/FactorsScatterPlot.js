@@ -23,7 +23,7 @@ export default class FactorsScatterPlot {
         const factors = this.dataStore.getFactors();
 
         this.margin.left = this.getYAxisMaxWidth(factors);
-        this.margin.bottom = this.getYAxisMaxWidth(factors) + 20;
+        this.margin.bottom = this.getXAxisMaxWidth(factors) + 20;
         this.margin.top = this.margin.bottom / 2;
         this.margin.right = this.margin.left / 2;
 
@@ -147,6 +147,17 @@ export default class FactorsScatterPlot {
 
                 this.tooltip.style("display", "none");
             });
+
+        // Labels
+        this.chartGroup.selectAll("text.label")
+            .data(points)
+            .join("text")
+            .attr("x", d => x(d.x) + 8)
+            .attr("y", d => y(d.y) + 4)
+            .text(d => d.label + 1)
+            .style("font-size", `${this.legendSize}px`)
+            .style("font-family", "sans-serif")
+            .style("fill", "#000");
 
         // X axis
         this.chartGroup.append("g")

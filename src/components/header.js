@@ -10,7 +10,6 @@ export default function Header() {
 
     const links = [
         { name: "factors", href: "/factors/general", icon: "ri-line-chart-line" },
-        { name: "explain", href: "/explain", icon: "ri-question-line" },
         { name: "info", href: "/info", icon: "ri-information-line" },
     ];
 

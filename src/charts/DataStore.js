@@ -15,17 +15,17 @@ export class DataStore {
       this.class = json.class;
       this.classDescription = [].concat(json.classDescription ?? []);
     }
-    if(json.coverage) {
+    if (json.coverage) {
       this.coverage = json.coverage;
     }
-    if(json.mds) {
+    if (json.mds) {
       this.mds = json.mds;
     }
 
-    if(json.sims) {
+    if (json.sims) {
       this.sims = json.sims;
     }
-    
+
   }
 
   getData() {
@@ -176,13 +176,17 @@ export class DataStore {
 
   getFactorAttributeDistribution(factorIdx) {
     const factor = this.factors[factorIdx];
-    const objectCount = factor.objects.length;
+
     const attributeCounts = this.attributes.map(() => 0);
 
-    factor.attributes.forEach(attrIdx => {
-      if (attrIdx >= 0 && attrIdx < attributeCounts.length) {
-        attributeCounts[attrIdx] = objectCount;
-      }
+    factor.objects.forEach(objectIndex => {
+      const item = this.data[objectIndex];
+
+      factor.attributes.forEach(attrIdx => {
+        if (item.includes(attrIdx)) {
+          attributeCounts[attrIdx]++;
+        }
+      });
     });
 
     return this.attributes.map((label, idx) => ({
@@ -190,6 +194,7 @@ export class DataStore {
       value: attributeCounts[idx]
     }));
   }
+
 
   getFactorsForDisplay() {
     return this.factors.map(factor => ({
