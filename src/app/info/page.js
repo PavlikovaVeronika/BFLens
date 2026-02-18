@@ -2,7 +2,7 @@ export default function Info() {
     return (
         <div className="flex flex-col py-5">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                About BMFLy
+                About BFLens
             </h2>
             <div className="flex flex-col p-5 rounded-lg border border-gray-200">
                 <div className="mb-8">
@@ -17,7 +17,7 @@ export default function Info() {
                 <div className="mb-8">
                     <h3 className="text-xl font-semibold mt-2 mb-1">Goal of the Application</h3>
                     <p className="text-gray-700">
-                        The goal of the BMFLy web application is to visualize the results of Boolean matrix factorization (BMF) and simplify the interpretation of factors. The user has several graphs available that visualize factors with respect to different parameters such as overlap with the original data or their similarity.
+                        The goal of the BFLens web application is to visualize the results of Boolean matrix factorization (BMF) and simplify the interpretation of factors. The user has several graphs available that visualize factors with respect to different parameters such as overlap with the original data or their similarity.
                     </p>
                 </div>
 
