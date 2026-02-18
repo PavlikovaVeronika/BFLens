@@ -19,7 +19,7 @@ export default function Header() {
             <div className="flex items-center gap-3">
                 <Link href="/">
                     <h1 className="font-bold text-zinc-50 text-3xl cursor-pointer hover:text-zinc-200 transition-colors">
-                        BMFLy
+                        BFLens
                     </h1>
                 </Link>
                 <span className="text-3xl text-zinc-50">|</span>

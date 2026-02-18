@@ -30,9 +30,9 @@ export default class FactorsCoveragePlot {
 
 
         // calculate max width for SVG
-        const columnWidth = 20;
+        const columnWidth = 40;
         const padding = 5;
-        const totalWidth = (this.factors.length + 1) * (columnWidth + padding);
+        const totalWidth = ((this.factors.length + 1) * (columnWidth + padding));
 
         const rect = this.element.getBoundingClientRect();
         const clientWidth = rect.width;
@@ -171,8 +171,7 @@ export default class FactorsCoveragePlot {
             .attr("transform", `translate(0, ${this.innerHeight})`)
             .call(d3.axisBottom(x))
             .selectAll("text")
-            .attr("transform", "rotate(-45)")
-            .style("text-anchor", "end")
+            .style("text-anchor", "middle")
             .style("font-size", `${this.legendSize}px`);
 
         // Y axis

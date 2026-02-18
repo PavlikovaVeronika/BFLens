@@ -194,6 +194,7 @@ export default class FactorsMDS {
             .call(d3.axisLeft(y))
             .style("font-size", `${this.legendSize}px`);
 
+            /*
         //top axis
         this.chartGroup.append("line")
             .attr("x1", 0)
@@ -212,6 +213,7 @@ export default class FactorsMDS {
             .attr("y2", this.innerHeight)
             .attr("stroke", "#000")
             .attr("stroke-width", 1);
+            */
 
     }
 

@@ -137,8 +137,7 @@ export default class FactorsObjectBarchart {
             .attr("transform", `translate(0, ${this.innerHeight})`)
             .call(d3.axisBottom(x))
             .selectAll("text")
-            .attr("transform", "rotate(-45)")
-            .style("text-anchor", "end")
+            .style("text-anchor", "middle")
             .style("font-size", `${this.legendSize}px`);
 
         // Y axis

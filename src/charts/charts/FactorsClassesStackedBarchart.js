@@ -33,16 +33,11 @@ export default class FactorsClassesStackedBarchart {
         const columnWidth = 40; // approximate px for one column - strech svg
         const totalWidth = distribution.length * columnWidth + this.margin.left + this.margin.right;
 
-        const rect = this.element.getBoundingClientRect();
-        const clientWidth = rect.width;
-
-        let svgWidth = Math.max(clientWidth, totalWidth);
-
         this.width = totalWidth;
         this.height = height;
 
         this.element.innerHTML = `
-      <svg width="${svgWidth}" height="${this.height}"></svg>
+      <svg width="${this.width}" height="${this.height}"></svg>
     `;
         this.svg = d3.select(this.element).select("svg");
 
