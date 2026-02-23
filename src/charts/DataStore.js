@@ -161,6 +161,10 @@ export class DataStore {
     const attributesCounts = this.attributes.map(() => 0);
 
     this.data.forEach(item => {
+      if (!Array.isArray(item)) {
+        item = [item];
+      }
+      
       item.forEach(attrIndex => {
         if (attrIndex >= 0 && attrIndex < attributesCounts.length) {
           attributesCounts[attrIndex]++;
