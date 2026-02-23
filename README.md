@@ -34,16 +34,6 @@ bun dev
 
 Open http://localhost:3000 with your browser to see the result.
 
-You can start editing the main page by modifying `app/page.tsx` or `app/page.js` (depending on your setup). The page auto-updates as you edit the file.
-
-If the project requires environment variables, create a `.env.local` file in the root directory and define the required variables there.
-
-Example:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
-```
-
 ---
 
 ## Features
