@@ -41,7 +41,6 @@ Open http://localhost:3000 with your browser to see the result.
 - Interactive visualization of factors  
 - Clear representation of relationships between variables  
 - Responsive and modern user interface  
-- Modular and extensible architecture  
 - Built with Next.js and React  
 - Ready for local development and production deployment  
 
@@ -59,7 +58,7 @@ BFLens/
 ├── src/
 │   ├── app/                  # Application routes (pages)
 │   ├── components/           # Reusable UI components
-│   └──charts/               # All charts logic
+│   └──charts/                # All charts logic
 │
 ├── package.json
 └── README.md
