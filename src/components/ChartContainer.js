@@ -69,47 +69,108 @@ export default function ChartContainer({ type, renderChart }) {
 
     }, [charts, height, similarityTarget, mdsTarget, mdsViewTarget, selectAll, renderChart, mdsOptions]);
 
-    // open chart in new window
     const openChartInNewWindow = () => {
         if (!chartRef.current) return;
 
+        // 2D SVG nebo 3D canvas
         const svg = chartRef.current.querySelector("svg");
-        if (!svg) return;
+        const canvas = chartRef.current.querySelector("canvas");
 
-        const clonedSVG = svg.cloneNode(true);
+        if (svg) {
+            // 2D - klonujeme SVG
+            const clonedSVG = svg.cloneNode(true);
+            const win = window.open("", "_blank");
+            if (!win) return;
+            win.document.title = "Chart preview";
+            win.document.body.appendChild(clonedSVG);
+        } else if (canvas) {
+            // 3D - WebGL canvas -> PNG
+            // Zajistíme, že canvas je finálně vyrenderován
+            const renderer = canvas._threeRenderer || null; // pokud uložíš reference
+            const scene = canvas._threeScene || null;
+            const camera = canvas._threeCamera || null;
 
-        const win = window.open("", "_blank");
-        if (!win) return;
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera); // final render
+            }
 
-        const doc = win.document;
-        doc.title = "Chart preview";
-
-        doc.body.appendChild(clonedSVG);
+            // snapshot
+            const url = canvas.toDataURL("image/png");
+            const img = new Image();
+            img.onload = () => {
+                const win = window.open("", "_blank");
+                if (!win) return;
+                win.document.title = "Chart preview";
+                win.document.body.style.margin = "0";
+                win.document.body.appendChild(img);
+            };
+            img.src = url;
+        }
     };
 
     const downloadChartSVG = () => {
-        const filename = type ? `${selectedFile}_${type}.svg` : `${selectedFile}_chart.svg`;
         if (!chartRef.current) return;
 
         const svg = chartRef.current.querySelector("svg");
-        if (!svg) return;
+        const canvas = chartRef.current.querySelector("canvas");
 
-        const clonedSVG = svg.cloneNode(true);
+        // ===== 2D SVG =====
+        if (svg) {
+            const filename = type
+                ? `${selectedFile}_${type}.svg`
+                : `${selectedFile}_chart.svg`;
 
-        const serializer = new XMLSerializer();
-        let svgString = serializer.serializeToString(clonedSVG);
+            const clonedSVG = svg.cloneNode(true);
 
-        svgString = `<?xml version="1.0" standalone="no"?>\n` + svgString;
+            const serializer = new XMLSerializer();
+            let svgString = serializer.serializeToString(clonedSVG);
+            svgString = `<?xml version="1.0" standalone="no"?>\n` + svgString;
 
-        const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+            const blob = new Blob([svgString], {
+                type: "image/svg+xml;charset=utf-8"
+            });
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            return;
+        }
+
+        // ===== 3D WebGL → PNG =====
+        if (canvas) {
+            const filename = type
+                ? `${selectedFile}_${type}.png`
+                : `${selectedFile}_chart.png`;
+
+            // vytvoříme nový canvas
+            const exportCanvas = document.createElement("canvas");
+            exportCanvas.width = canvas.width;
+            exportCanvas.height = canvas.height;
+
+            const ctx = exportCanvas.getContext("2d");
+
+            // bílé pozadí
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+            // překreslíme původní WebGL canvas
+            ctx.drawImage(canvas, 0, 0);
+
+            const url = exportCanvas.toDataURL("image/png");
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     };
 
 

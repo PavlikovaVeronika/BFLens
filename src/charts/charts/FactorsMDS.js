@@ -228,7 +228,7 @@ export default class FactorsMDS {
         );
         camera.position.set(1, 1, 3);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
         renderer.setSize(this.width, this.height);
         this.element.innerHTML = "";
         this.element.appendChild(renderer.domElement);
